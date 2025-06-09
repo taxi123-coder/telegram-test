@@ -21,11 +21,11 @@ function showPhase(phase) {
     scenarioSelectionDiv.style.display = 'none';
 
     if (phase === 'character_selection') {
-        characterGrid.style.display = 'grid';
+        characterGrid.style.display = 'grid'; // Wichtig: display auf 'grid' setzen
         Telegram.WebApp.MainButton.setText("Charakter wählen").disable(); // Initial deaktiviert
         selectionStatus.textContent = ''; // Status zurücksetzen
     } else if (phase === 'scenario_selection') {
-        scenarioSelectionDiv.style.display = 'block';
+        scenarioSelectionDiv.style.display = 'block'; // Wichtig: display auf 'block' setzen
         Telegram.WebApp.MainButton.setText("Szenario wählen").disable(); // Initial deaktiviert
         selectionStatus.textContent = ''; // Status zurücksetzen
     }
@@ -69,4 +69,61 @@ scenarioCards.forEach(card => {
         switch (selectedScenario) {
             case 'mysterious_forest': scenarioName = 'Der uralte Fluch (Wald)'; break;
             case 'abandoned_castle': scenarioName = 'Das Echo des Königs (Burg)'; break;
-            case 'bustling_city': scenarioName = 'Intrigen in
+            case 'bustling_city': scenarioName = 'Intrigen in der Metropole (Stadt)'; break;
+            default: scenarioName = 'ein unbekanntes Szenario'; break;
+        }
+        selectionStatus.textContent = `Du hast "${scenarioName}" gewählt! Klicke den Button unten, um das Spiel zu starten.`;
+        selectionStatus.style.color = Telegram.WebApp.themeParams.link_color || '#b76bf9';
+
+        // Aktiviere den MainButton für den Spielstart
+        Telegram.WebApp.MainButton.setText(`Starte "${scenarioName}"`).enable();
+        Telegram.WebApp.MainButton.onClick(handleMainButtonClick); // Klick-Handler neu setzen
+    });
+});
+
+
+// --- Handler für den MainButton-Klick (zentrale Logik) ---
+function handleMainButtonClick() {
+    Telegram.WebApp.HapticFeedback.impactOccurred('medium'); // Stärkere Vibration
+
+    if (currentPhase === 'character_selection') {
+        if (selectedCharacter) {
+            // Übergang zur Szenario-Auswahl
+            showPhase('scenario_selection');
+            Telegram.WebApp.MainButton.hide(); // Verstecke den Button kurz beim Übergang
+            // Reset MainButton für Szenario-Auswahl phase
+            Telegram.WebApp.MainButton.setText("Szenario wählen").disable().show();
+        } else {
+            Telegram.WebApp.showAlert('Bitte wähle zuerst einen Charakter aus!');
+        }
+    } else if (currentPhase === 'scenario_selection') {
+        if (selectedScenario) {
+            // Spiel starten und App schließen
+            const gameData = {
+                character: selectedCharacter,
+                scenario: selectedScenario
+            };
+
+            // Daten an den Bot senden (wichtig für den nächsten Schritt!)
+            // Der Bot erhält diese Daten als Textnachricht
+            Telegram.WebApp.sendData(JSON.stringify(gameData));
+
+            // Optional: Kurze Bestätigung, dann App schließen
+            // Telegram.WebApp.showAlert(`Spiel startet mit ${selectedCharacter} im Szenario ${selectedScenario}!`);
+            // Setze einen kleinen Timeout, damit die Alert-Meldung gesehen werden kann
+            // setTimeout(() => {
+            //     Telegram.WebApp.close(); // Schliesst die Mini App
+            // }, 1000); // 1 Sekunde Verzögerung
+            
+            // Sofort schließen, um schneller zum Bot zurückzukehren
+            Telegram.WebApp.close(); // Schliesst die Mini App
+
+        } else {
+            Telegram.WebApp.showAlert('Bitte wähle zuerst ein Szenario aus!');
+        }
+    }
+}
+
+// Initialisiere die App-Anzeige (zeige zuerst die Charakterauswahl)
+showPhase('character_selection');
+Telegram.WebApp.MainButton.hide(); // Verstecke den MainButton zu Beginn, bis ein Charakter gewählt ist
