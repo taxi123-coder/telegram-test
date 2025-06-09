@@ -127,3 +127,205 @@ body {
 
 .character-card.selected {
     border-color: var(--highlight-color); /* Aktiver Rahmen */
+    box-shadow: 0 0 0 3px var(--highlight-color), 0 8px 25px rgba(0, 0, 0, 0.6); /* Rahmen und Schatten */
+}
+
+.character-card img {
+    width: 100%;
+    height: auto; /* Höhe flexibel anpassen */
+    display: block; /* Entfernt zusätzlichen Platz unter dem Bild */
+    border-top-left-radius: 10px; /* Abgerundete Ecken für Bild */
+    border-top-right-radius: 10px;
+}
+
+.character-info {
+    padding: 10px 15px 0;
+    width: 100%; /* Stellt sicher, dass Info den Platz ausfüllt */
+    box-sizing: border-box; /* Padding wird in Breite eingerechnet */
+}
+
+.character-info h2 {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin: 10px 0 5px;
+    color: var(--tg-theme-text-color, var(--text-color-light));
+}
+
+.character-info p {
+    font-size: 0.9em;
+    color: var(--tg-theme-hint-color, var(--text-color-dark));
+    line-height: 1.4;
+    margin: 0;
+}
+
+.heart-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparenter Hintergrund */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 0.8em;
+    /* Dies ist nur ein Platzhalter, du könntest hier ein echtes SVG-Herz einfügen */
+}
+.heart-icon::before {
+    content: '❤'; /* Unicode-Herzsymbol */
+}
+
+/* --- Untere Navigationsleiste --- */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    background-color: var(--tg-theme-secondary-bg-color, var(--card-bg));
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3); /* Leichter Schatten nach oben */
+    z-index: 10;
+    width: 100%;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-item img {
+    width: 28px;
+    height: 28px;
+    filter: invert(1); /* Bild-Farbe anpassen, wenn es sich um einfache Icons handelt */
+}
+
+.nav-item.selected img {
+    /* Falls du farbige Icons hast, die den aktiven Status zeigen */
+    /* Oder einen anderen Filter, um den aktiven Zustand hervorzuheben */
+    filter: invert(0.5) sepia(1) saturate(5) hue-rotate(200deg); /* Beispiel: Lila-Effekt */
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#selection-status {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.1em;
+    color: var(--tg-theme-hint-color, var(--text-color-dark));
+    margin-bottom: 60px; /* Platz für den MainButton oder Navigationsleiste */
+}
+
+/* Anpassungen für kleinere Bildschirme */
+@media (max-width: 600px) {
+    .character-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+        padding: 10px;
+    }
+    .header h1 {
+        font-size: 1.3em;
+    }
+    .currency-display {
+        font-size: 0.9em;
+    }
+    .character-card {
+        padding-bottom: 10px;
+    }
+    .character-info h2 {
+        font-size: 1.1em;
+    }
+    .character-info p {
+        font-size: 0.8em;
+    }
+}
+
+/* --- Szenario-Auswahl-Bereich --- */
+.scenario-selection {
+    padding: 20px;
+    text-align: center;
+}
+
+.scenario-selection h1 {
+    font-size: 1.6em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--tg-theme-text-color, var(--text-color-light));
+}
+
+.scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Breitere Karten für Szenarien */
+    gap: 20px;
+    padding-bottom: 80px; /* Platz für den MainButton */
+}
+
+.scenario-card {
+    background-color: var(--tg-theme-secondary-bg-color, var(--card-bg));
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left; /* Text linksbündig in der Karte */
+    position: relative;
+}
+
+.scenario-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    border-color: var(--highlight-color);
+}
+
+.scenario-card.selected {
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 3px var(--highlight-color), 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.scenario-card img {
+    width: 100%;
+    height: 180px; /* Feste Höhe für Szenariobilder */
+    object-fit: cover; /* Bildausschnitt anpassen */
+    display: block;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.scenario-info {
+    padding: 15px;
+}
+
+.scenario-info h2 {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--tg-theme-text-color, var(--text-color-light));
+}
+
+.scenario-info p {
+    font-size: 0.95em;
+    color: var(--tg-theme-hint-color, var(--text-color-dark));
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Anpassungen für kleinere Bildschirme bei Szenarien */
+@media (max-width: 600px) {
+    .scenario-grid {
+        grid-template-columns: 1fr; /* Einzelne Spalte auf kleinen Bildschirmen */
+    }
+    .scenario-info h2 {
+        font-size: 1.2em;
+    }
+    .scenario-info p {
+        font-size: 0.85em;
+    }
+}
