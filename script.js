@@ -17,16 +17,13 @@ function showPhase(phase) {
 
     if (phase === 'character_selection') {
         characterGrid.style.display = 'grid';
-        Telegram.WebApp.MainButton.setText("Charakter wählen").disable().show();
         selectionStatus.textContent = '';
     } else if (phase === 'scenario_selection') {
         scenarioSelectionDiv.style.display = 'block';
-        Telegram.WebApp.MainButton.setText("Szenario wählen").disable().show();
         selectionStatus.textContent = '';
     }
 
     currentPhase = phase;
-    Telegram.WebApp.HapticFeedback.impactOccurred('light');
 }
 
 characterCards.forEach(card => {
@@ -35,18 +32,18 @@ characterCards.forEach(card => {
         card.classList.add('selected');
         selectedCharacter = card.dataset.character;
 
+        // Optional: Highlight welcher Charakter gewählt wurde
         const names = {
             jane: "Jane",
             frau_grace: "Frau Grace",
             sakura: "Sakura",
             nya: "Nya"
         };
-
         const name = names[selectedCharacter] || "unbekannt";
-        selectionStatus.textContent = `Du hast "${name}" gewählt! Klicke den Button unten, um fortzufahren.`;
-        selectionStatus.style.color = Telegram.WebApp.themeParams.link_color || "#b76bf9";
+        console.log(`Charakter gewählt: ${name}`);
 
-        Telegram.WebApp.MainButton.setText(`Spiele als ${name}`).enable();
+        // Direkt zur Szenario-Auswahl wechseln
+        showPhase('scenario_selection');
     });
 });
 
@@ -61,38 +58,18 @@ scenarioCards.forEach(card => {
             abandoned_castle: "Das Echo des Königs (Burg)",
             bustling_city: "Intrigen in der Metropole (Stadt)"
         };
-
         const name = names[selectedScenario] || "unbekannt";
-        selectionStatus.textContent = `Du hast "${name}" gewählt! Klicke den Button unten, um das Spiel zu starten.`;
-        selectionStatus.style.color = Telegram.WebApp.themeParams.link_color || "#b76bf9";
 
-        Telegram.WebApp.MainButton.setText(`Starte "${name}"`).enable();
+        // Direkt Spiel starten & Daten an Telegram schicken
+        const gameData = {
+            character: selectedCharacter,
+            scenario: selectedScenario
+        };
+        console.log('Sende an Telegram:', gameData);
+        Telegram.WebApp.sendData(JSON.stringify(gameData));
+        Telegram.WebApp.close();
     });
 });
 
-Telegram.WebApp.MainButton.onClick(() => {
-    Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-
-    if (currentPhase === 'character_selection') {
-        if (selectedCharacter) {
-            showPhase('scenario_selection');
-        } else {
-            Telegram.WebApp.showAlert('Bitte wähle zuerst einen Charakter aus!');
-        }
-    } else if (currentPhase === 'scenario_selection') {
-        if (selectedScenario) {
-            const gameData = {
-                character: selectedCharacter,
-                scenario: selectedScenario
-            };
-            Telegram.WebApp.sendData(JSON.stringify(gameData));
-            Telegram.WebApp.close();
-        } else {
-            Telegram.WebApp.showAlert('Bitte wähle zuerst ein Szenario aus!');
-        }
-    }
-});
-
+// App startet mit Charakterauswahl
 showPhase('character_selection');
-Telegram.WebApp.MainButton.hide();
-
