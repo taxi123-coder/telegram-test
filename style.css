@@ -1,1 +1,248 @@
+:root {
+    /* Benutzerdefinierte Farben, basierend auf dem Bild */
+    --dark-bg: #1a1a2e; /* Dunkler Hintergrund */
+    --card-bg: #2d2a45; /* Hintergrund der Karten */
+    --border-color: #4a4563; /* Rahmenfarbe der Karten */
+    --highlight-color: #b76bf9; /* Lila Akzentfarbe (wie der aktive Rahmen) */
+    --text-color-light: #e0e0e0; /* Helle Textfarbe */
+    --text-color-dark: #a0a0a0; /* Dunklere Textfarbe (für Beschreibungen) */
+    --button-bg-color: #3b305e; /* Hintergrund für Buttons wie "+" */
+    --button-text-color: #ffffff;
+    --currency-color-diamond: #00e0ff; /* Türkis für Diamanten */
+    --currency-color-energy: #ffe000; /* Gelb für Energie */
 
+    /* Telegram Theme-Variablen nutzen, falls verfügbar und passend */
+    /* --tg-theme-bg-color: #1a1a2e; /* Sollte standardmäßig auf dark-bg fallen */
+    /* --tg-theme-text-color: #e0e0e0; */
+    /* --tg-theme-hint-color: #a0a0a0; */
+    /* --tg-theme-secondary-bg-color: #2d2a45; */
+    /* --tg-theme-button-color: var(--highlight-color); */
+    /* --tg-theme-button-text-color: #ffffff; */
+}
+
+
+body {
+    font-family: 'Roboto', sans-serif; /* Mit Google Fonts geladen */
+    background-color: var(--tg-theme-bg-color, var(--dark-bg)); /* Haupt-Hintergrund */
+    color: var(--tg-theme-text-color, var(--text-color-light)); /* Haupt-Textfarbe */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* Für Header, Grid und Bottom-Nav */
+    min-height: 100vh;
+    overflow-y: auto; /* Scrollen ermöglichen, falls Inhalt zu lang */
+    box-sizing: border-box;
+}
+
+/* --- Header-Bereich (Oben) --- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--tg-theme-secondary-bg-color, var(--card-bg)); /* Dunkler als body, passt zum Bild */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
+    z-index: 10; /* Über anderen Inhalten */
+    position: sticky; /* Bleibt beim Scrollen oben */
+    top: 0;
+}
+
+.header h1 {
+    font-size: 1.6em;
+    font-weight: 700;
+    margin: 0;
+    color: var(--tg-theme-text-color, var(--text-color-light));
+}
+
+.currency-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.currency-display span {
+    background-color: var(--button-bg-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.currency-display .diamond-icon { color: var(--currency-color-diamond); }
+.currency-display .energy-icon { color: var(--currency-color-energy); }
+
+.currency-display .add-button {
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    line-height: 1; /* Für bessere Zentrierung des '+' */
+    transition: background-color 0.2s ease;
+}
+
+.currency-display .add-button:hover {
+    background-color: var(--highlight-color);
+}
+
+
+/* --- Charakter-Grid --- */
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Responsives Grid */
+    gap: 20px; /* Abstand zwischen den Karten */
+    padding: 20px;
+    flex-grow: 1; /* Nimmt verfügbaren Platz ein */
+}
+
+.character-card {
+    background-color: var(--tg-theme-secondary-bg-color, var(--card-bg));
+    border-radius: 12px; /* Stärker gerundete Ecken */
+    overflow: hidden; /* Bilder ragen nicht über Ecken */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Tieferer Schatten */
+    border: 2px solid var(--border-color); /* Feiner Rahmen */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative; /* Für das Herz-Symbol */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 15px; /* Abstand unter dem Text */
+}
+
+.character-card:hover {
+    transform: translateY(-5px); /* Leichter Schwebe-Effekt */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    border-color: var(--highlight-color); /* Akzentfarbe bei Hover */
+}
+
+.character-card.selected {
+    border-color: var(--highlight-color); /* Aktiver Rahmen */
+    box-shadow: 0 0 0 3px var(--highlight-color), 0 8px 25px rgba(0, 0, 0, 0.6); /* Rahmen und Schatten */
+}
+
+.character-card img {
+    width: 100%;
+    height: auto; /* Höhe flexibel anpassen */
+    display: block; /* Entfernt zusätzlichen Platz unter dem Bild */
+    border-top-left-radius: 10px; /* Abgerundete Ecken für Bild */
+    border-top-right-radius: 10px;
+}
+
+.character-info {
+    padding: 10px 15px 0;
+    width: 100%; /* Stellt sicher, dass Info den Platz ausfüllt */
+    box-sizing: border-box; /* Padding wird in Breite eingerechnet */
+}
+
+.character-info h2 {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin: 10px 0 5px;
+    color: var(--tg-theme-text-color, var(--text-color-light));
+}
+
+.character-info p {
+    font-size: 0.9em;
+    color: var(--tg-theme-hint-color, var(--text-color-dark));
+    line-height: 1.4;
+    margin: 0;
+}
+
+.heart-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparenter Hintergrund */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 0.8em;
+    /* Dies ist nur ein Platzhalter, du könntest hier ein echtes SVG-Herz einfügen */
+}
+.heart-icon::before {
+    content: '❤'; /* Unicode-Herzsymbol */
+}
+
+/* --- Untere Navigationsleiste --- */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    background-color: var(--tg-theme-secondary-bg-color, var(--card-bg));
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3); /* Leichter Schatten nach oben */
+    z-index: 10;
+    width: 100%;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-item img {
+    width: 28px;
+    height: 28px;
+    filter: invert(1); /* Bild-Farbe anpassen, wenn es sich um einfache Icons handelt */
+}
+
+.nav-item.selected img {
+    /* Falls du farbige Icons hast, die den aktiven Status zeigen */
+    /* Oder einen anderen Filter, um den aktiven Zustand hervorzuheben */
+    filter: invert(0.5) sepia(1) saturate(5) hue-rotate(200deg); /* Beispiel: Lila-Effekt */
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#selection-status {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 1.1em;
+    color: var(--tg-theme-hint-color, var(--text-color-dark));
+    margin-bottom: 60px; /* Platz für den MainButton oder Navigationsleiste */
+}
+
+/* Anpassungen für kleinere Bildschirme */
+@media (max-width: 600px) {
+    .character-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+        padding: 10px;
+    }
+    .header h1 {
+        font-size: 1.3em;
+    }
+    .currency-display {
+        font-size: 0.9em;
+    }
+    .character-card {
+        padding-bottom: 10px;
+    }
+    .character-info h2 {
+        font-size: 1.1em;
+    }
+    .character-info p {
+        font-size: 0.8em;
+    }
+}
