@@ -108,13 +108,6 @@ function handleMainButtonClick() {
             // Der Bot erhält diese Daten als Textnachricht
             Telegram.WebApp.sendData(JSON.stringify(gameData));
 
-            // Optional: Kurze Bestätigung, dann App schließen
-            // Telegram.WebApp.showAlert(`Spiel startet mit ${selectedCharacter} im Szenario ${selectedScenario}!`);
-            // Setze einen kleinen Timeout, damit die Alert-Meldung gesehen werden kann
-            // setTimeout(() => {
-            //     Telegram.WebApp.close(); // Schliesst die Mini App
-            // }, 1000); // 1 Sekunde Verzögerung
-            
             // Sofort schließen, um schneller zum Bot zurückzukehren
             Telegram.WebApp.close(); // Schliesst die Mini App
 
