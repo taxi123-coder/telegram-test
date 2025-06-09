@@ -3,22 +3,44 @@ Telegram.WebApp.ready();
 Telegram.WebApp.expand(); // App auf die volle Höhe erweitern
 
 // 2. Hole dir Referenzen zu den HTML-Elementen
+const characterGrid = document.querySelector('.character-grid');
 const characterCards = document.querySelectorAll('.character-card');
-const selectionStatus = document.getElementById('selection-status');
-let selectedCharacter = null; // Variable, um den aktuell ausgewählten Charakter zu speichern
+const scenarioSelectionDiv = document.querySelector('.scenario-selection');
+const scenarioCards = document.querySelectorAll('.scenario-card');
+const selectionStatus = document.getElementById('selection-status'); // Dies kann auch für Szenarien genutzt werden
 
-// 3. Füge Event Listener zu den Charakterkarten hinzu
+let selectedCharacter = null;
+let selectedScenario = null;
+
+// Status-Variable, um zu verfolgen, in welcher Phase wir uns befinden (Charakter-Auswahl oder Szenario-Auswahl)
+let currentPhase = 'character_selection'; // 'character_selection' oder 'scenario_selection'
+
+// Funktion, um die Anzeige der UI-Phasen zu wechseln
+function showPhase(phase) {
+    characterGrid.style.display = 'none';
+    scenarioSelectionDiv.style.display = 'none';
+
+    if (phase === 'character_selection') {
+        characterGrid.style.display = 'grid';
+        Telegram.WebApp.MainButton.setText("Charakter wählen").disable(); // Initial deaktiviert
+        selectionStatus.textContent = ''; // Status zurücksetzen
+    } else if (phase === 'scenario_selection') {
+        scenarioSelectionDiv.style.display = 'block';
+        Telegram.WebApp.MainButton.setText("Szenario wählen").disable(); // Initial deaktiviert
+        selectionStatus.textContent = ''; // Status zurücksetzen
+    }
+    currentPhase = phase;
+    Telegram.WebApp.HapticFeedback.impactOccurred('light'); // Leichte Vibration beim Phasenwechsel
+}
+
+
+// --- Logik für die Charakterauswahl ---
 characterCards.forEach(card => {
     card.addEventListener('click', () => {
-        // Entferne 'selected' Klasse von allen Karten
-        characterCards.forEach(c => c.classList.remove('selected'));
+        characterCards.forEach(c => c.classList.remove('selected')); // Alle abwählen
+        card.classList.add('selected'); // Aktuelle auswählen
+        selectedCharacter = card.dataset.character;
 
-        // Füge 'selected' Klasse zur geklickten Karte hinzu
-        card.classList.add('selected');
-
-        selectedCharacter = card.dataset.character; // Holt den Wert aus data-character
-
-        // Zeige eine Bestätigung in der App an
         let characterName = '';
         switch (selectedCharacter) {
             case 'jane': characterName = 'Jane'; break;
@@ -27,42 +49,24 @@ characterCards.forEach(card => {
             case 'nya': characterName = 'Nya'; break;
             default: characterName = 'einen unbekannten Charakter'; break;
         }
-        selectionStatus.textContent = `Du hast "${characterName}" gewählt!`;
-        selectionStatus.style.color = Telegram.WebApp.themeParams.link_color || '#b76bf9'; // Lila Akzentfarbe
+        selectionStatus.textContent = `Du hast "${characterName}" gewählt! Klicke den Button unten, um fortzufahren.`;
+        selectionStatus.style.color = Telegram.WebApp.themeParams.link_color || '#b76bf9';
 
-        // Sende eine haptische Rückmeldung (leichte Vibration)
-        Telegram.WebApp.HapticFeedback.impactOccurred('light');
-
-        // Zeige den MainButton an und aktiviere ihn
-        Telegram.WebApp.MainButton.setText(`Spiele als ${characterName}`).show();
-        Telegram.WebApp.MainButton.enable(); // Sicherstellen, dass er aktiv ist
-        Telegram.WebApp.MainButton.onClick(handleMainButtonClick); // Füge den Klick-Handler hinzu
+        // Aktiviere den MainButton für den nächsten Schritt
+        Telegram.WebApp.MainButton.setText(`Spiele als ${characterName}`).enable();
+        Telegram.WebApp.MainButton.onClick(handleMainButtonClick); // Klick-Handler setzen
     });
 });
 
-// Handler für den MainButton-Klick
-function handleMainButtonClick() {
-    if (selectedCharacter) {
-        Telegram.WebApp.showAlert(`Starte das Spiel als ${selectedCharacter}!`);
+// --- Logik für die Szenario-Auswahl ---
+scenarioCards.forEach(card => {
+    card.addEventListener('click', () => {
+        scenarioCards.forEach(c => c.classList.remove('selected')); // Alle abwählen
+        card.classList.add('selected'); // Aktuelle auswählen
+        selectedScenario = card.dataset.scenario;
 
-        // Hier würde die Logik für den Übergang zum nächsten Schritt folgen:
-        // - Wechsel zur Chat-Ansicht mit dem Charakter
-        // - Senden der Auswahl an dein Backend, um die KI-Sitzung zu starten
-        // Beispiel:
-        // Telegram.WebApp.sendData(JSON.stringify({ action: 'start_game', character: selectedCharacter }));
-
-        // Verstecke den MainButton, wenn die Aktion initiiert wurde
-        Telegram.WebApp.MainButton.hide();
-
-        // Optional: Deaktiviere die Charakterauswahl, wenn das Spiel startet
-        characterCards.forEach(c => c.style.pointerEvents = 'none'); // Macht Karten nicht mehr klickbar
-    } else {
-        Telegram.WebApp.showAlert('Bitte wähle zuerst einen Charakter aus!');
-    }
-}
-
-// Initialer Zustand des MainButtons: Versteckt oder deaktiviert
-Telegram.WebApp.MainButton.hide();
-// Oder wenn du ihn von Anfang an zeigen, aber deaktiviert haben möchtest:
-// Telegram.WebApp.MainButton.setText("Wähle einen Charakter").show();
-// Telegram.WebApp.MainButton.disable();
+        let scenarioName = '';
+        switch (selectedScenario) {
+            case 'mysterious_forest': scenarioName = 'Der uralte Fluch (Wald)'; break;
+            case 'abandoned_castle': scenarioName = 'Das Echo des Königs (Burg)'; break;
+            case 'bustling_city': scenarioName = 'Intrigen in
